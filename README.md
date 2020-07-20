@@ -1,4 +1,4 @@
-# DirSync
+# Dirsync
 
 This script synchronizes the destination directory with the source directory.
 
