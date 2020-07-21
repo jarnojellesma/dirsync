@@ -2,6 +2,7 @@ import logging
 import os
 import shutil
 import sys
+import multiprocessing as mp
 
 logger = logging.getLogger(__name__)
 
@@ -43,15 +44,24 @@ def sync(src, dest):
     logger.info("synchronization finished")
 
 
-def main():
+def process(args):
+    # New process requires reinitialization of logging.
     logging.basicConfig(level=logging.INFO, format='%(message)s')
+    sync(args[0], args[1])
 
-    if not len(sys.argv) == 3:
+
+def main():
+    if len(sys.argv) < 3:
         logger.error("invalid arguments")
         sys.exit(1)
 
-    sync(sys.argv[1], sys.argv[2])
+    src = sys.argv[1]
+    dests = [(src, dest) for dest in sys.argv[2:]]
+
+    with mp.Pool(mp.cpu_count()) as pool:
+        pool.map(process, dests)
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format='%(message)s')
     main()
