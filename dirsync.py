@@ -36,11 +36,30 @@ def rmfiles(dest, files):
         os.remove(os.path.join(dest, f))
 
 
+def rmemptydirs(path):
+    if not os.path.isdir(path):
+        return
+
+    files = os.listdir(path)
+
+    if len(files):
+        for f in files:
+            fullpath = os.path.join(path, f)
+            if os.path.isdir(fullpath):
+                rmemptydirs(fullpath)
+
+    files = os.listdir(path)
+    if len(files) == 0:
+        logger.info(f"deleting folder {path}")
+        os.rmdir(path)
+
+
 def sync(src, dest):
     logger.info(f"syncing directory {src} to {dest}")
     files_to_add, files_to_remove = diff_dir_layout(src, dest)
     cpfiles(src, dest, files_to_add)
     rmfiles(dest, files_to_remove)
+    rmemptydirs(dest)
     logger.info("synchronization finished")
 
 
