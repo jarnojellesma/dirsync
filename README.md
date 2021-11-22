@@ -13,4 +13,3 @@ Multiple destinations (each destination is handled in parallel)
 python dirsync.py <source> <dest1> <dest2> <dest3> ...
 ```
 
-`
